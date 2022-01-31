@@ -1,0 +1,14 @@
+server:
+  port: 8090
+
+
+spring:
+  datasource:
+    username: "macroswebapp"
+    password: "M4cr0sw3b4pp*2022" ##Enter your root password
+    url: "jdbc:sqlserver://dwh.cbolivar.com:13143;databaseName=MacrosWebAppDev"
+    driverClassName: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+  jpa:
+    hibernate.ddl-auto: none
+    generate-ddl: false
+    show-sql: true
