@@ -13,8 +13,8 @@ public class LegalizacionService {
 	@Autowired
 	private LegalizacionRepository legalizacionRepository;
 
-	public String getStoreProcedureInfo(int page, int size) {
-		return legalizacionRepository.getStoreProcedureInfo(page, size);
+	public String getStoreProcedureInfo(int page, int size, String sortFilter) {
+		return legalizacionRepository.getStoreProcedureInfo(page, size, sortFilter);
 	}
 
 }
