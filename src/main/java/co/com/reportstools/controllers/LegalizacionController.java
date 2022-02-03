@@ -24,8 +24,14 @@ public class LegalizacionController {
 	@RequestMapping(value = "/legalizacion", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String getStoreProcedureInfo(@RequestParam(required = false) String proyecto,
 			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size,
-			@RequestParam(required = false) String sortFilter) {
+			@RequestParam(required = false) String sortFilter, @RequestParam(required = false) String dataFilter) {
 
-		return legalizacionService.getStoreProcedureInfo(page, size, sortFilter);
+		return legalizacionService.getStoreProcedureInfo(page, size, sortFilter, dataFilter);
+	}
+
+	@RequestMapping(value = "/legalizacion/filter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List getStoreProcedureHeaderOptionList(@RequestParam(required = false) String dataFilter, @RequestParam String dataGroup) {
+
+		return legalizacionService.getStoreProcedureHeaderOptionList(dataFilter, dataGroup);
 	}
 }
