@@ -13,12 +13,16 @@ public class LegalizacionService {
 	@Autowired
 	private LegalizacionRepository legalizacionRepository;
 
-	public String getStoreProcedureInfo(int page, int size, String sortFilter, String dataFilter) {
-		return legalizacionRepository.getStoreProcedureInfo(page, size, sortFilter, dataFilter);
+	public String getStoreProcedureInfo(String obras, int page, int size, String sortFilter, String dataFilter) {
+		return legalizacionRepository.getStoreProcedureInfo(obras, page, size, sortFilter, dataFilter);
 	}
 
-	public List getStoreProcedureHeaderOptionList(String dataFilter, String dataGroup) {
-		return legalizacionRepository.getStoreProcedureHeaderOptionList(dataFilter,dataGroup);
+	public List getStoreProcedureHeaderOptionList(String obras, String dataFilter, String dataGroup) {
+		return legalizacionRepository.getStoreProcedureHeaderOptionList(obras, dataFilter, dataGroup);
+	}
+
+	public String updateLegalizacion(String data) {
+		return legalizacionRepository.updateLegalizacion(data);
 	}
 
 }
