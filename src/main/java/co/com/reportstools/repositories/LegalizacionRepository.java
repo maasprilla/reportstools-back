@@ -30,8 +30,6 @@ public class LegalizacionRepository {
 
 		Query queryCount = entityManager.createNativeQuery(callProcedure);
 		NativeQueryImpl nativeQuery = (NativeQueryImpl) queryCount;
-		// nativeQuery.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
-//		List<Map<String, Object>> result = nativeQuery.getResultList();
 		String result = String.valueOf(nativeQuery.getSingleResult());
 		Long totalNumber = Long.parseLong(result);
 		System.out.println(result);
@@ -97,14 +95,10 @@ public class LegalizacionRepository {
 //
 		JSONObject resultadoJSON = new JSONObject();
 		resultadoJSON.put("headers", resultHeadersList);
-//		resultadoJSON.put("typeDate", typeDataHeader);
 		resultadoJSON.put("data", resultData);
 		resultadoJSON.put("count", totalNumber);
 		return resultadoJSON.toString();
-//		r = r.replace("\n", "").replace("\r", "").replace("\t", "");
-//		r = r.strip();
-//		r = r.trim();
-//		return resultHeaders;
+
 	}
 
 	public List getStoreProcedureHeaderOptionList(String obras, String dataFilter, String dataGroup) {
@@ -131,5 +125,60 @@ public class LegalizacionRepository {
 		String resultData = (String) nativeQueryData.getSingleResult();
 
 		return resultData;
+	}
+
+	public String multipleUpdateLegalizacion(String field, String newValue, String obras, String sortFilter,
+			String dataFilter) {
+
+		String callProcedureData = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "'";
+		if (sortFilter != null) {
+			callProcedureData = callProcedureData + " , @SortFilter = '" + sortFilter + "' ";
+		}
+
+		if (dataFilter != null) {
+			callProcedureData = callProcedureData + " , @DataFilter = '" + dataFilter + "' ";
+			System.out.println(callProcedureData);
+		}
+
+		Query queryData = entityManager.createNativeQuery(callProcedureData);
+		NativeQueryImpl nativeQueryData = (NativeQueryImpl) queryData;
+		nativeQueryData.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+		List<Map<String, Object>> resultData = nativeQueryData.getResultList();
+
+		String peticion = "";
+		for (Map<String, Object> map : resultData) {
+			for (Map.Entry<String, Object> entry : map.entrySet()) {
+				if (entry.getKey().equals(field)) {
+					entry.setValue(newValue);
+				}
+			}
+
+			String entryInsert = "INSERT INTO #tblTEMP  \n"
+					+ "    ([UNI_ID],[FechaSeguimientoCoordinador],[EstadoCoordinador],[ObservacionCoordinador],[FechaSeguimientoAnalista],[EstadoAnalista],\n"
+					+ "      [ObservacionAnalista],[FechaAsignacion],[AsignacionAnalista],[AnalistaVarado],[FechaAsignacionVarado],[FechaDesvarado] ) \n"
+					+ "      VALUES (''" + map.get("UNI_ID") + "'',\n" + "      ''"
+					+ map.get("FechaSeguimientoCoordinador") + "'',\n" + "      ''" + map.get("EstadoCoordinador")
+					+ "'',\n" + "      ''" + map.get("ObservacionCoordinador") + "'',\n" + "      ''"
+					+ map.get("FechaSeguimientoAnalista") + "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n"
+					+ "      ''" + map.get("ObservacionAnalista") + "'',\n" + "      ''" + map.get("FechaAsignacion")
+					+ "'',\n" + "      ''" + map.get("AsignacionAnalista") + "'',\n" + "      ''"
+					+ map.get("AnalistaVarado") + "'',\n" + "      ''" + map.get("FechaAsignacionVarado") + "'',\n"
+					+ "      ''" + map.get("FechaDesvarado") + "'')";
+
+			entryInsert = entryInsert.replace("Invalid Date", "null");
+			entryInsert = entryInsert.replace("''null''", "NULL");
+			entryInsert = entryInsert + " ";
+			peticion = peticion + entryInsert;
+		}
+
+		System.out.println(peticion);
+
+		String callProcedureUpdate = "EXEC [dbo].[SP__Update_Legalizacion] @data = '" + peticion + "'";
+
+		Query queryDataUpdate = entityManager.createNativeQuery(callProcedureUpdate);
+		NativeQueryImpl nativeQueryUpdate = (NativeQueryImpl) queryDataUpdate;
+		String resultDataUpdate = (String) nativeQueryUpdate.getSingleResult();
+
+		return resultDataUpdate;
 	}
 }

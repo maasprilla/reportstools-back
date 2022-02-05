@@ -25,4 +25,9 @@ public class LegalizacionService {
 		return legalizacionRepository.updateLegalizacion(data);
 	}
 
+	public String multipleUpdateLegalizacion(String field, String newValue, String obras, String sortFilter,
+			String dataFilter) {
+		return legalizacionRepository.multipleUpdateLegalizacion(field, newValue, obras, sortFilter, dataFilter);
+	}
+
 }
