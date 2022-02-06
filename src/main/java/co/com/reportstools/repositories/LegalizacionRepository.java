@@ -25,8 +25,17 @@ public class LegalizacionRepository {
 	private EntityManager entityManager;
 
 	public String getStoreProcedureInfo(String obras, int page, int size, String sortFilter, String dataFilter) {
+	
 
 		String callProcedure = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "' , @Opt = '1'";
+		if (dataFilter != null) {
+			
+			dataFilter = dataFilter.replace("Invalid Date", "null");
+			dataFilter = dataFilter.replace("Vacio", "null");
+			dataFilter = dataFilter.replace("''null''", "NULL");
+			callProcedure = callProcedure + " , @DataFilter = '" + dataFilter + "' ";
+			System.out.println(callProcedure);
+		}
 
 		Query queryCount = entityManager.createNativeQuery(callProcedure);
 		NativeQueryImpl nativeQuery = (NativeQueryImpl) queryCount;
@@ -48,6 +57,10 @@ public class LegalizacionRepository {
 		}
 
 		if (dataFilter != null) {
+			
+			dataFilter = dataFilter.replace("Invalid Date", "null");
+			dataFilter = dataFilter.replace("Vacio", "null");
+			dataFilter = dataFilter.replace("''null''", "NULL");
 			callProcedureData = callProcedureData + " , @DataFilter = '" + dataFilter + "' ";
 			System.out.println(callProcedureData);
 		}
