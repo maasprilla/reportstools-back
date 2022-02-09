@@ -25,11 +25,10 @@ public class LegalizacionRepository {
 	private EntityManager entityManager;
 
 	public String getStoreProcedureInfo(String obras, int page, int size, String sortFilter, String dataFilter) {
-	
 
 		String callProcedure = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "' , @Opt = '1'";
 		if (dataFilter != null) {
-			
+
 			dataFilter = dataFilter.replace("Invalid Date", "null");
 			dataFilter = dataFilter.replace("Vacio", "null");
 			dataFilter = dataFilter.replace("''null''", "NULL");
@@ -57,7 +56,7 @@ public class LegalizacionRepository {
 		}
 
 		if (dataFilter != null) {
-			
+
 			dataFilter = dataFilter.replace("Invalid Date", "null");
 			dataFilter = dataFilter.replace("Vacio", "null");
 			dataFilter = dataFilter.replace("''null''", "NULL");
@@ -142,6 +141,9 @@ public class LegalizacionRepository {
 
 	public String multipleUpdateLegalizacion(String field, String newValue, String obras, String sortFilter,
 			String dataFilter) {
+		
+		newValue = newValue.replace("Vacio", "NULL");
+
 
 		String callProcedureData = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "'";
 		if (sortFilter != null) {
@@ -183,6 +185,11 @@ public class LegalizacionRepository {
 			entryInsert = entryInsert + " ";
 			peticion = peticion + entryInsert;
 		}
+		
+		peticion = peticion.replace("Invalid Date", "null");
+		peticion = peticion.replace("Vacio", "null");
+		peticion = peticion.replace("NULL", "null");
+		peticion = peticion.replace("''null''", "NULL");
 
 		System.out.println(peticion);
 
@@ -192,6 +199,10 @@ public class LegalizacionRepository {
 		NativeQueryImpl nativeQueryUpdate = (NativeQueryImpl) queryDataUpdate;
 		String resultDataUpdate = (String) nativeQueryUpdate.getSingleResult();
 
-		return resultDataUpdate;
+		JSONObject resp = new JSONObject();
+		resp.put("code", 0);
+		resp.put("message", resultDataUpdate);
+
+		return resp.toString();
 	}
 }
