@@ -14,9 +14,11 @@ import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Repository
 public class LegalizacionRepository {
@@ -104,10 +106,23 @@ public class LegalizacionRepository {
 //		} catch (JsonProcessingException e) {
 //			jsonBook = "[]";
 //		}
-//
+//		ObjectMapper mapper = new ObjectMapper();
+//		mapper.setSerializationInclusion(Include.NON_NULL);
+//		String json = "";
+//		try {
+//			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultData);
+//		} catch (JsonProcessingException e) {
+//			json = "[]";
+//		}
+
+		GsonBuilder builder = new GsonBuilder();
+		builder.serializeNulls();
+		Gson gson = builder.setPrettyPrinting().create();
+		String jsonEmp = gson.toJson(resultData);
+
 		JSONObject resultadoJSON = new JSONObject();
 		resultadoJSON.put("headers", resultHeadersList);
-		resultadoJSON.put("data", resultData);
+		resultadoJSON.put("data", jsonEmp);
 		resultadoJSON.put("count", totalNumber);
 		return resultadoJSON.toString();
 
@@ -141,9 +156,8 @@ public class LegalizacionRepository {
 
 	public String multipleUpdateLegalizacion(String field, String newValue, String obras, String sortFilter,
 			String dataFilter) {
-		
-		newValue = newValue.replace("Vacio", "NULL");
 
+		newValue = newValue.replace("Vacio", "NULL");
 
 		String callProcedureData = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "'";
 		if (sortFilter != null) {
@@ -185,7 +199,7 @@ public class LegalizacionRepository {
 			entryInsert = entryInsert + " ";
 			peticion = peticion + entryInsert;
 		}
-		
+
 		peticion = peticion.replace("Invalid Date", "null");
 		peticion = peticion.replace("Vacio", "null");
 		peticion = peticion.replace("NULL", "null");
