@@ -6,7 +6,7 @@ spring:
   datasource:
     username: "macroswebapp"
     password: "M4cr0sw3b4pp*2022"
-    url: "jdbc:sqlserver://dwh.cbolivar.com:13144;databaseName=MacrosWebAppDev"
+    url: "jdbc:sqlserver://dwh.cbolivar.com:13144;databaseName=MacrosWebApp"
     driverClassName: "com.microsoft.sqlserver.jdbc.SQLServerDriver"
   jpa:
     hibernate:

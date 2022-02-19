@@ -24,37 +24,70 @@ public class LegalizacionController {
 	private LegalizacionService legalizacionService;
 
 	@RequestMapping(value = "/legalizacion", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String getStoreProcedureInfo(@RequestParam(required = false) String proyecto,
-			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "5") int size,
-			@RequestParam(required = false) String sortFilter, @RequestParam(required = false) String dataFilter) {
+	public String getStoreProcedureInfo(@RequestBody String peticion) {
 
-		return legalizacionService.getStoreProcedureInfo(proyecto, page, size, sortFilter, dataFilter);
+		JSONObject jsonTemp = new JSONObject(peticion);
+		Integer reportType = !jsonTemp.isNull("reportType") ? jsonTemp.getInt("reportType") : null;
+		String proyecto = !jsonTemp.isNull("proyecto") ? jsonTemp.getString("proyecto") : null;
+		Integer page = !jsonTemp.isNull("page") ? jsonTemp.getInt("page") : 1;
+		Integer size = !jsonTemp.isNull("size") ? jsonTemp.getInt("size") : 5;
+		String sortFilter = !jsonTemp.isNull("sortFilter") ? jsonTemp.getString("sortFilter") : null;
+		String dataFilter = !jsonTemp.isNull("dataFilter") ? jsonTemp.getString("dataFilter") : null;
+
+		return legalizacionService.getStoreProcedureInfo(proyecto, page, size, sortFilter, dataFilter, reportType);
 	}
 
 	@RequestMapping(value = "/legalizacion/filter", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List getStoreProcedureHeaderOptionList(@RequestParam String proyecto,
-			@RequestParam(required = false) String dataFilter, @RequestParam String dataGroup) {
+	public List getStoreProcedureHeaderOptionList(@RequestBody String peticion) {
 
-		return legalizacionService.getStoreProcedureHeaderOptionList(proyecto, dataFilter, dataGroup);
+		JSONObject jsonTemp = new JSONObject(peticion);
+		Integer reportType = !jsonTemp.isNull("reportType") ? jsonTemp.getInt("reportType") : null;
+		String proyecto = !jsonTemp.isNull("proyecto") ? jsonTemp.getString("proyecto") : null;
+		String dataGroup = !jsonTemp.isNull("dataGroup") ? jsonTemp.getString("dataGroup") : null;
+		String dataFilter = !jsonTemp.isNull("dataFilter") ? jsonTemp.getString("dataFilter") : null;
+
+		return legalizacionService.getStoreProcedureHeaderOptionList(proyecto, dataFilter, dataGroup, reportType);
+
+	}
+
+	@RequestMapping(value = "/legalizacion/filter/like", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List getStoreProcedureHeaderOptionFilterList(@RequestBody String peticion) {
+
+		JSONObject jsonTemp = new JSONObject(peticion);
+		Integer reportType = !jsonTemp.isNull("reportType") ? jsonTemp.getInt("reportType") : null;
+		String proyecto = !jsonTemp.isNull("proyecto") ? jsonTemp.getString("proyecto") : null;
+		String dataGroup = !jsonTemp.isNull("dataGroup") ? jsonTemp.getString("dataGroup") : null;
+		String dataFilter = !jsonTemp.isNull("dataFilter") ? jsonTemp.getString("dataFilter") : null;
+		String filterLike = !jsonTemp.isNull("filterLike") ? jsonTemp.getString("filterLike") : null;
+
+		return legalizacionService.getStoreProcedureHeaderOptionFilterList(proyecto, dataFilter, dataGroup, filterLike,
+				reportType);
+
 	}
 
 	@RequestMapping(value = "/legalizacion/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String UpdateData(@RequestBody String peticion) {
-		peticion = peticion.replace("Invalid Date", "null");
-		peticion = peticion.replace("''null''", "NULL");
-		System.out.println(peticion);
-		return legalizacionService.updateLegalizacion(peticion);
+		JSONObject jsonTemp = new JSONObject(peticion);
+		Integer reportType = !jsonTemp.isNull("reportType") ? jsonTemp.getInt("reportType") : null;
+		String data = !jsonTemp.isNull("data") ? jsonTemp.getString("data") : null;
+
+		data = data.replace("Invalid Date", "null");
+		data = data.replace("''null''", "NULL");
+		System.out.println(data);
+		return legalizacionService.updateLegalizacion(data, reportType);
 	}
 
 	@RequestMapping(value = "/legalizacion/multisave", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String multipleUpdateLegalizacion(@RequestBody String peticion) {
 		JSONObject jsonTemp = new JSONObject(peticion);
+		Integer reportType = !jsonTemp.isNull("reportType") ? jsonTemp.getInt("reportType") : null;
 		String field = !jsonTemp.isNull("field") ? jsonTemp.getString("field") : null;
 		String newValue = !jsonTemp.isNull("newValue") ? jsonTemp.getString("newValue") : null;
 		String obras = !jsonTemp.isNull("obras") ? jsonTemp.getString("obras") : null;
 		String sortFilter = !jsonTemp.isNull("sortFilter") ? jsonTemp.getString("sortFilter") : null;
 		String dataFilter = !jsonTemp.isNull("dataFilter") ? jsonTemp.getString("dataFilter") : null;
 
-		return legalizacionService.multipleUpdateLegalizacion(field, newValue, obras,sortFilter, dataFilter);
+		return legalizacionService.multipleUpdateLegalizacion(field, newValue, obras, sortFilter, dataFilter,
+				reportType);
 	}
 }

@@ -26,35 +26,58 @@ public class LegalizacionRepository {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public String getStoreProcedureInfo(String obras, int page, int size, String sortFilter, String dataFilter) {
+	final int LEGALIZACION = 1;
+	final int PROMESA = 2;
+	final int SUBSIDIO = 3;
+	final int SEGUIMIENTO_SUBSIDIO = 4;
+	final int ENTREGA = 5;
+	final int DESEMBOLSO = 6;
+	final int RECAUDO = 7;
+	final int TRAZABILIDAD = 8;
 
-		String callProcedure = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "' , @Opt = '1'";
+	final String STORE_PROCEDURE_LEGALIZACION = "sp_legalizacion";
+	final String STORE_PROCEDURE_PROMESA = "sp_promesas";
+	final String STORE_PROCEDURE_SUBSIDIO = "sp_subsidio";
+	final String STORE_PROCEDURE_SEGUIMIENTO_SUBSIDIO = "sp_segsubsidio";
+	final String STORE_PROCEDURE_ENTREGA = "sp_entregas";
+	final String STORE_PROCEDURE_DESEMBOLSO = "sp_desembolso";
+	final String STORE_PROCEDURE_RECAUDO = "";
+	final String STORE_PROCEDURE_TRAZABILIDAD = "sp_trazabilidad";
+
+	public String getStoreProcedureInfo(String obras, int page, int size, String sortFilter, String dataFilter,
+			int reportType) {
+
+		String storeProcedureName = this.getStoreProcedureName(reportType);
+
+		obras = this.getProyectos();
+
+		String callProcedure = "EXEC [dbo].[" + storeProcedureName + "] @obras = '" + obras + "' , @Opt = '1'";
 		if (dataFilter != null) {
 
 			dataFilter = dataFilter.replace("Invalid Date", "null");
 			dataFilter = dataFilter.replace("Vacio", "null");
 			dataFilter = dataFilter.replace("''null''", "NULL");
 			callProcedure = callProcedure + " , @DataFilter = '" + dataFilter + "' ";
-			System.out.println(callProcedure);
+//			System.out.println(callProcedure);
 		}
 
 		Query queryCount = entityManager.createNativeQuery(callProcedure);
 		NativeQueryImpl nativeQuery = (NativeQueryImpl) queryCount;
 		String result = String.valueOf(nativeQuery.getSingleResult());
 		Long totalNumber = Long.parseLong(result);
-		System.out.println(result);
+//		System.out.println(result);
 
 		Query queryHeaders = entityManager
-				.createNativeQuery("EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "' , @Opt = '2'");
+				.createNativeQuery("EXEC [dbo].[" + storeProcedureName + "] @obras = '" + obras + "' , @Opt = '2'");
 		NativeQueryImpl nativeQueryHeaders = (NativeQueryImpl) queryHeaders;
 		String resultHeaders = String.valueOf(nativeQueryHeaders.getSingleResult());
 		String[] resultHeadersList = resultHeaders.split(",");
 
-		String callProcedureData = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "' , @PageNumber = '" + page
-				+ "',   @RowspPage = '" + size + "'";
+		String callProcedureData = "EXEC [dbo].[" + storeProcedureName + "] @obras = '" + obras + "' , @PageNumber = '"
+				+ page + "',   @RowspPage = '" + size + "'";
 		if (sortFilter != null) {
-			callProcedureData = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "', @PageNumber = '" + page
-					+ "', @RowspPage = '" + size + "' , @SortFilter = '" + sortFilter + "'";
+			callProcedureData = "EXEC [dbo].[" + storeProcedureName + "] @obras = '" + obras + "', @PageNumber = '"
+					+ page + "', @RowspPage = '" + size + "' , @SortFilter = '" + sortFilter + "'";
 		}
 
 		if (dataFilter != null) {
@@ -63,57 +86,13 @@ public class LegalizacionRepository {
 			dataFilter = dataFilter.replace("Vacio", "null");
 			dataFilter = dataFilter.replace("''null''", "NULL");
 			callProcedureData = callProcedureData + " , @DataFilter = '" + dataFilter + "' ";
-			System.out.println(callProcedureData);
+//			System.out.println(callProcedureData);
 		}
 
 		Query queryData = entityManager.createNativeQuery(callProcedureData);
 		NativeQueryImpl nativeQueryData = (NativeQueryImpl) queryData;
 		nativeQueryData.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
 		List<Map<String, Object>> resultData = nativeQueryData.getResultList();
-
-//
-//		String typeDataHeader[] = null;
-//		String nameHeader[] = null;
-
-//		int count1 = 0;
-//		for (Map<String, Object> map : result) {
-//			if (count1 == 0) {
-//				typeDataHeader = new String[map.size()];
-//				nameHeader = new String[map.size()];
-////				for (int i = 0; i < map.size(); i++) {
-////					JSONObject jsonTemp = new JSONObject();
-////					typeDataHeader[i] = new JSONObject();
-////				}
-//			}
-//
-//			int count2 = 0;
-//			for (Map.Entry<String, Object> entry : map.entrySet()) {
-//				nameHeader[count2] = entry.getKey();
-//				if (entry.getValue() != null) {
-//					if (typeDataHeader != null && typeDataHeader[count2] == null) {
-//						typeDataHeader[count2] = entry.getValue().getClass().getName();
-//					}
-//				}
-//				count2++;
-//			}
-//			count1++;
-//		}
-//
-//		String jsonBook = "";
-//		ObjectMapper mapper = new ObjectMapper();
-//		try {
-//			jsonBook = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
-//		} catch (JsonProcessingException e) {
-//			jsonBook = "[]";
-//		}
-//		ObjectMapper mapper = new ObjectMapper();
-//		mapper.setSerializationInclusion(Include.NON_NULL);
-//		String json = "";
-//		try {
-//			json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultData);
-//		} catch (JsonProcessingException e) {
-//			json = "[]";
-//		}
 
 		GsonBuilder builder = new GsonBuilder();
 		builder.serializeNulls();
@@ -128,13 +107,18 @@ public class LegalizacionRepository {
 
 	}
 
-	public List getStoreProcedureHeaderOptionList(String obras, String dataFilter, String dataGroup) {
-		String callProcedureData = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras
+	public List getStoreProcedureHeaderOptionList(String obras, String dataFilter, String dataGroup, int reportType) {
+
+		String storeProcedureName = this.getStoreProcedureName(reportType);
+
+		obras = this.getProyectos();
+
+		String callProcedureData = "EXEC [dbo].[" + storeProcedureName + "] @obras = '" + obras
 				+ "' , @Opt = '3',   @DataGroup = '" + dataGroup + "'";
 
 		if (dataFilter != null) {
 			callProcedureData = callProcedureData + " , @DataFilter = '" + dataFilter + "' ";
-			System.out.println(callProcedureData);
+//			System.out.println(callProcedureData);
 		}
 
 		Query queryData = entityManager.createNativeQuery(callProcedureData);
@@ -144,8 +128,33 @@ public class LegalizacionRepository {
 		return resultData;
 	}
 
-	public String updateLegalizacion(String data) {
-		String callProcedureData = "EXEC [dbo].[SP__Update_Legalizacion] @data = '" + data + "'";
+	public List getStoreProcedureHeaderOptionFilterList(String obras, String dataFilter, String dataGroup,
+			String filterLike, int reportType) {
+
+		String storeProcedureName = this.getStoreProcedureName(reportType);
+
+		obras = this.getProyectos();
+
+		String callProcedureData = "EXEC [dbo].[" + storeProcedureName + "] @obras = '" + obras
+				+ "' , @Opt = '4',   @DataGroup = '" + dataGroup + "'";
+
+		if (dataFilter != null) {
+			callProcedureData = callProcedureData + " , @DataFilter = '" + dataFilter + "' ";
+		}
+
+		if (filterLike != null) {
+			callProcedureData = callProcedureData + " , @FilterLike = '" + filterLike + "' ";
+		}
+
+		Query queryData = entityManager.createNativeQuery(callProcedureData);
+		NativeQueryImpl nativeQueryData = (NativeQueryImpl) queryData;
+		List resultData = nativeQueryData.getResultList();
+
+		return resultData;
+	}
+
+	public String updateLegalizacion(String data, int reportType) {
+		String callProcedureData = "EXEC [dbo].[sp_update_legalizacion] @data = '" + data + "' , @reportType = '"+reportType+"'  ";
 
 		Query queryData = entityManager.createNativeQuery(callProcedureData);
 		NativeQueryImpl nativeQueryData = (NativeQueryImpl) queryData;
@@ -155,18 +164,20 @@ public class LegalizacionRepository {
 	}
 
 	public String multipleUpdateLegalizacion(String field, String newValue, String obras, String sortFilter,
-			String dataFilter) {
+			String dataFilter, int reportType) {
+
+		String storeProcedureName = this.getStoreProcedureName(reportType);
 
 		newValue = newValue.replace("Vacio", "NULL");
 
-		String callProcedureData = "EXEC [dbo].[SP_Legalizacion_test] @obras = '" + obras + "'";
+		String callProcedureData = "EXEC [dbo].[" + storeProcedureName + "] @obras = '" + obras + "'";
 		if (sortFilter != null) {
 			callProcedureData = callProcedureData + " , @SortFilter = '" + sortFilter + "' ";
 		}
 
 		if (dataFilter != null) {
 			callProcedureData = callProcedureData + " , @DataFilter = '" + dataFilter + "' ";
-			System.out.println(callProcedureData);
+//			System.out.println(callProcedureData);
 		}
 
 		Query queryData = entityManager.createNativeQuery(callProcedureData);
@@ -205,9 +216,9 @@ public class LegalizacionRepository {
 		peticion = peticion.replace("NULL", "null");
 		peticion = peticion.replace("''null''", "NULL");
 
-		System.out.println(peticion);
+//		System.out.println(peticion);
 
-		String callProcedureUpdate = "EXEC [dbo].[SP__Update_Legalizacion] @data = '" + peticion + "'";
+		String callProcedureUpdate = "EXEC [dbo].[sp_update_legalizacion] @data = '" + peticion + "'";
 
 		Query queryDataUpdate = entityManager.createNativeQuery(callProcedureUpdate);
 		NativeQueryImpl nativeQueryUpdate = (NativeQueryImpl) queryDataUpdate;
@@ -218,5 +229,46 @@ public class LegalizacionRepository {
 		resp.put("message", resultDataUpdate);
 
 		return resp.toString();
+	}
+
+	public String getProyectos() {
+		String callProcedureData = "SELECT PRY_ID FROM [MacrosWebApp].[dbo].[tbl_proyectos] GROUP BY PRY_ID";
+
+		Query queryData = entityManager.createNativeQuery(callProcedureData);
+		NativeQueryImpl nativeQueryData = (NativeQueryImpl) queryData;
+		List<String> resultData = (List<String>) nativeQueryData.getResultList();
+
+		String obras = "";
+		for (int i = 0; i < resultData.size(); i++) {
+			if (i < (resultData.size() - 1)) {
+				obras += "''" + resultData.get(i) + "'',";
+			} else {
+				obras += "''" + resultData.get(i) + "''";
+			}
+		}
+
+		return obras;
+	}
+
+	private String getStoreProcedureName(int id) {
+		if (this.LEGALIZACION == id) {
+			return STORE_PROCEDURE_LEGALIZACION;
+		} else if (this.PROMESA == id) {
+			return STORE_PROCEDURE_PROMESA;
+		} else if (this.SUBSIDIO == id) {
+			return STORE_PROCEDURE_SUBSIDIO;
+		} else if (this.SEGUIMIENTO_SUBSIDIO == id) {
+			return STORE_PROCEDURE_SEGUIMIENTO_SUBSIDIO;
+		} else if (this.ENTREGA == id) {
+			return STORE_PROCEDURE_ENTREGA;
+		} else if (this.DESEMBOLSO == id) {
+			return STORE_PROCEDURE_DESEMBOLSO;
+		} else if (this.RECAUDO == id) {
+			return STORE_PROCEDURE_RECAUDO;
+		} else if (this.TRAZABILIDAD == id) {
+			return STORE_PROCEDURE_TRAZABILIDAD;
+		}
+
+		return null;
 	}
 }
