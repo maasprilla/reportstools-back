@@ -154,7 +154,8 @@ public class LegalizacionRepository {
 	}
 
 	public String updateLegalizacion(String data, int reportType) {
-		String callProcedureData = "EXEC [dbo].[sp_update_legalizacion] @data = '" + data + "' , @reportType = '"+reportType+"'  ";
+		String callProcedureData = "EXEC [dbo].[sp_update_legalizacion] @data = '" + data + "' , @reportType = '"
+				+ reportType + "'  ";
 
 		Query queryData = entityManager.createNativeQuery(callProcedureData);
 		NativeQueryImpl nativeQueryData = (NativeQueryImpl) queryData;
@@ -193,17 +194,44 @@ public class LegalizacionRepository {
 				}
 			}
 
-			String entryInsert = "INSERT INTO #tblTEMP  \n"
-					+ "    ([UNI_ID],[FechaSeguimientoCoordinador],[EstadoCoordinador],[ObservacionCoordinador],[FechaSeguimientoAnalista],[EstadoAnalista],\n"
-					+ "      [ObservacionAnalista],[FechaAsignacion],[AsignacionAnalista],[AnalistaVarado],[FechaAsignacionVarado],[FechaDesvarado] ) \n"
-					+ "      VALUES (''" + map.get("UNI_ID") + "'',\n" + "      ''"
-					+ map.get("FechaSeguimientoCoordinador") + "'',\n" + "      ''" + map.get("EstadoCoordinador")
-					+ "'',\n" + "      ''" + map.get("ObservacionCoordinador") + "'',\n" + "      ''"
-					+ map.get("FechaSeguimientoAnalista") + "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n"
-					+ "      ''" + map.get("ObservacionAnalista") + "'',\n" + "      ''" + map.get("FechaAsignacion")
-					+ "'',\n" + "      ''" + map.get("AsignacionAnalista") + "'',\n" + "      ''"
-					+ map.get("AnalistaVarado") + "'',\n" + "      ''" + map.get("FechaAsignacionVarado") + "'',\n"
-					+ "      ''" + map.get("FechaDesvarado") + "'')";
+			String entryInsert = "";
+			if (reportType == this.LEGALIZACION) {
+				entryInsert = "INSERT INTO #tblTEMP  \n"
+						+ "    ([UNI_ID],[FechaSeguimientoCoordinador],[EstadoCoordinador],[ObservacionCoordinador],[FechaSeguimientoAnalista],[EstadoAnalista],\n"
+						+ "      [ObservacionAnalista],[FechaAsignacion],[AsignacionAnalista],[AnalistaVarado],[FechaAsignacionVarado],[FechaDesvarado] ) \n"
+						+ "      VALUES (''" + map.get("UNI_ID") + "'',\n" + "      ''"
+						+ map.get("FechaSeguimientoCoordinador") + "'',\n" + "      ''" + map.get("EstadoCoordinador")
+						+ "'',\n" + "      ''" + map.get("ObservacionCoordinador") + "'',\n" + "      ''"
+						+ map.get("FechaSeguimientoAnalista") + "'',\n" + "      ''" + map.get("EstadoAnalista")
+						+ "'',\n" + "      ''" + map.get("ObservacionAnalista") + "'',\n" + "      ''"
+						+ map.get("FechaAsignacion") + "'',\n" + "      ''" + map.get("AsignacionAnalista") + "'',\n"
+						+ "      ''" + map.get("AnalistaVarado") + "'',\n" + "      ''"
+						+ map.get("FechaAsignacionVarado") + "'',\n" + "      ''" + map.get("FechaDesvarado") + "'')";
+			} else if (reportType == this.PROMESA) {
+				entryInsert = "INSERT INTO #tblTEMP  \n"
+						+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
+						+ "      [ObservacionAnalista] ) \n" + "      VALUES (''" + map.get("UNI_ID") + "'',\n"
+						+ "      ''" + map.get("EstadoCoordinador") + "'',\n" + "      ''"
+						+ map.get("ObservacionCoordinador") + "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n"
+						+ "      ''" + map.get("ObservacionAnalista") + "'')";
+			} else if (reportType == this.SEGUIMIENTO_SUBSIDIO) {
+				entryInsert = "INSERT INTO #tblTEMP  \n"
+						+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
+						+ "      [ObservacionAnalista] ) \n" + "      VALUES (''" + map.get("UNI_ID") + "'',\n"
+						+ "      ''" + map.get("EstadoCoordinador") + "'',\n" + "      ''"
+						+ map.get("ObservacionCoordinador") + "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n"
+						+ "      ''" + map.get("ObservacionAnalista") + "'')";
+			} else if (reportType == this.ENTREGA) {
+				entryInsert = "INSERT INTO #tblTEMP  \n"
+						+ "    ([UNI_ID],[FechadeEntrega],[HoradeEntrega],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
+						+ "      [ObservacionAnalista], [Arquitecta]) \n" + "      VALUES (''" + map.get("UNI_ID")
+						+ "'',\n" + "      ''" + map.get("FechadeEntrega") + "'',\n" + "      ''"
+						+ map.get("HoradeEntrega") + "'',\n" + "      ''" + map.get("EstadoCoordinador") + "'',\n"
+						+ "      ''" + map.get("ObservacionCoordinador") + "'',\n" + "      ''"
+						+ map.get("EstadoAnalista") + "'',\n" + "      ''" + map.get("ObservacionAnalista") + "'', "
+						+ "      ''" + map.get("Arquitecta") + "'' )";
+
+			}
 
 			entryInsert = entryInsert.replace("Invalid Date", "null");
 			entryInsert = entryInsert.replace("''null''", "NULL");
@@ -218,7 +246,8 @@ public class LegalizacionRepository {
 
 //		System.out.println(peticion);
 
-		String callProcedureUpdate = "EXEC [dbo].[sp_update_legalizacion] @data = '" + peticion + "'";
+		String callProcedureUpdate = "EXEC [dbo].[sp_update_legalizacion] @data = '" + peticion + "'"
+				+ " , @reportType = '" + reportType + "'  ";
 
 		Query queryDataUpdate = entityManager.createNativeQuery(callProcedureUpdate);
 		NativeQueryImpl nativeQueryUpdate = (NativeQueryImpl) queryDataUpdate;
