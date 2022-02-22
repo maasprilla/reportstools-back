@@ -38,4 +38,8 @@ public class LegalizacionService {
 				reportType);
 	}
 
+	public List getOptionListModal(String herramienta, String campo) {
+		return legalizacionRepository.getOptionListModal(herramienta, campo);
+	}
+
 }

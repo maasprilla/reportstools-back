@@ -90,4 +90,13 @@ public class LegalizacionController {
 		return legalizacionService.multipleUpdateLegalizacion(field, newValue, obras, sortFilter, dataFilter,
 				reportType);
 	}
+	
+	@RequestMapping(value = "/get-option-list-modal", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<String> getOptionListModal(@RequestBody String peticion) {
+		JSONObject jsonTemp = new JSONObject(peticion);
+		String herramienta = !jsonTemp.isNull("herramienta") ? jsonTemp.getString("herramienta") : null;
+		String campo = !jsonTemp.isNull("campo") ? jsonTemp.getString("campo") : null;
+
+		return legalizacionService.getOptionListModal(herramienta, campo);
+	}
 }

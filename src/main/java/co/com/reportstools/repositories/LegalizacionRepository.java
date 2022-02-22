@@ -279,6 +279,18 @@ public class LegalizacionRepository {
 		return obras;
 	}
 
+	public List<String> getOptionListModal(String herramienta, String campo) {
+		String callProcedureData = "SELECT Opcion FROM [MacrosWebApp].[dbo].[tbl_options] WHERE Herramienta = '"
+				+ herramienta + "' AND Campo = '" + campo + "' GROUP BY Opcion ORDER BY Opcion";
+
+		System.out.println(callProcedureData);
+		Query queryData = entityManager.createNativeQuery(callProcedureData);
+		NativeQueryImpl nativeQueryData = (NativeQueryImpl) queryData;
+		List<String> resultData = (List<String>) nativeQueryData.getResultList();
+
+		return resultData;
+	}
+
 	private String getStoreProcedureName(int id) {
 		if (this.LEGALIZACION == id) {
 			return STORE_PROCEDURE_LEGALIZACION;
