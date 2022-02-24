@@ -224,13 +224,34 @@ public class LegalizacionRepository {
 			} else if (reportType == this.ENTREGA) {
 				entryInsert = "INSERT INTO #tblTEMP  \n"
 						+ "    ([UNI_ID],[FechadeEntrega],[HoradeEntrega],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
-						+ "      [ObservacionAnalista], [Arquitecta]) \n" + "      VALUES (''" + map.get("UNI_ID")
-						+ "'',\n" + "      ''" + map.get("FechadeEntrega") + "'',\n" + "      ''"
-						+ map.get("HoradeEntrega") + "'',\n" + "      ''" + map.get("EstadoCoordinador") + "'',\n"
-						+ "      ''" + map.get("ObservacionCoordinador") + "'',\n" + "      ''"
-						+ map.get("EstadoAnalista") + "'',\n" + "      ''" + map.get("ObservacionAnalista") + "'', "
-						+ "      ''" + map.get("Arquitecta") + "'' )";
+						+ "      [ObservacionAnalista], [Arquitecta],[CreacionCaso],[Apoderado]) \n"
+						+ "      VALUES (''" + map.get("UNI_ID") + "'',\n" + "      ''" + map.get("FechadeEntrega")
+						+ "'',\n" + "      ''" + map.get("HoradeEntrega") + "'',\n" + "      ''"
+						+ map.get("EstadoCoordinador") + "'',\n" + "      ''" + map.get("ObservacionCoordinador")
+						+ "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n" + "      ''"
+						+ map.get("ObservacionAnalista") + "'', " + "      ''" + map.get("Arquitecta") + "'', "
+						+ "      ''" + map.get("CreacionCaso") + "'', " + "      ''" + map.get("Apoderado")
+						+ "'' )";
 
+			} else if (reportType == this.DESEMBOLSO) {
+				entryInsert = "INSERT INTO #tblTEMP  \n"
+						+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[Comentarios],[EstadoAnalista],\n"
+						+ "      [ObservacionAnalista] ) \n" + "      VALUES (''" + map.get("UNI_ID") + "'',\n"
+						+ "      ''" + map.get("EstadoCoordinador") + "'',\n" + "      ''"
+						+ map.get("ObservacionCoordinador") + "'',\n" + "      ''" + map.get("Comentarios") + "'',\n"
+						+ "      ''" + map.get("EstadoAnalista") + "'',\n" + "      ''" + map.get("ObservacionAnalista")
+						+ "'')";
+			} else if (reportType == this.TRAZABILIDAD) {
+				entryInsert = "INSERT INTO #tblTEMP  \n"
+						+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
+						+ "      [ObservacionAnalista],[TipificacionCorreccionesCtl],[NBR],[AnalistaTrazabilidad],[DetalleObservacion] ) \n"
+						+ "      VALUES (''" + map.get("UNI_ID") + "'',\n" + "      ''" + map.get("EstadoCoordinador")
+						+ "'',\n" + "      ''" + map.get("ObservacionCoordinador") + "'',\n" + "      ''"
+						+ map.get("EstadoAnalista") + "'',\n"+ "      ''"
+						+ map.get("ObservacionAnalista") + "'',\n"+ "      ''"
+						+ map.get("TipificacionCorreccionesCtl") + "'',\n"+ "      ''"
+						+ map.get("NBR") + "'',\n"+ "      ''"
+						+ map.get("AnalistaTrazabilidad") + "'',\n" + "      ''" + map.get("DetalleObservacion") + "'')";
 			}
 
 			entryInsert = entryInsert.replace("Invalid Date", "null");
