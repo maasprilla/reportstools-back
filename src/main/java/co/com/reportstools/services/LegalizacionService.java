@@ -28,18 +28,22 @@ public class LegalizacionService {
 				reportType);
 	}
 
-	public String updateLegalizacion(String data, int reportType) {
-		return legalizacionRepository.updateLegalizacion(data, reportType);
+	public String updateLegalizacion(String data, int reportType, List auditList, String user) {
+		return legalizacionRepository.updateLegalizacion(data, reportType, auditList, user);
 	}
 
 	public String multipleUpdateLegalizacion(String field, String newValue, String obras, String sortFilter,
-			String dataFilter, int reportType) {
+			String dataFilter, int reportType, String user) {
 		return legalizacionRepository.multipleUpdateLegalizacion(field, newValue, obras, sortFilter, dataFilter,
-				reportType);
+				reportType, user);
 	}
 
 	public List getOptionListModal(String herramienta, String campo) {
 		return legalizacionRepository.getOptionListModal(herramienta, campo);
+	}
+
+	public String loadData(String data, int reportType) {
+		return legalizacionRepository.loadData(data, reportType);
 	}
 
 }
