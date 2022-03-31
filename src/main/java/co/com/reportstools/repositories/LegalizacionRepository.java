@@ -413,8 +413,8 @@ public class LegalizacionRepository {
 			if (user != null && user != "") {
 				for (Audit auditTemp : auditList) {
 					if (!auditTemp.getValorAnterior().equals(auditTemp.getValorActual())) {
-						this.auditData(auditTemp.getUNI_ID(), auditTemp.getHerramienta(),auditTemp.getCampo(), auditTemp.getValorAnterior(),
-								auditTemp.getValorActual(), user);
+						this.auditData(auditTemp.getUNI_ID(), auditTemp.getHerramienta(), auditTemp.getCampo(),
+								auditTemp.getValorAnterior(), auditTemp.getValorActual(), user);
 					}
 				}
 			}
@@ -528,7 +528,10 @@ public class LegalizacionRepository {
 
 				for (String entry : element.keySet()) {
 //					System.out.println(entry);
-					map.put(entry, element.get(entry));
+					map.put(entry, element.get(entry) == null ? "IGNORE"
+							: (element.get(entry).toString().equals("vacio")
+									|| element.get(entry).toString().equals("Vacio")
+									|| element.get(entry).toString().equals("VACIO")) ? null : element.get(entry));
 				}
 				String id = element.getString("UNI_ID");
 				// System.out.println(id);
@@ -667,8 +670,8 @@ public class LegalizacionRepository {
 
 //			System.out.println(peticion);
 
-			String callProcedureUpdate = "EXEC [dbo].[sp_update_legalizacion] @data = '" + peticion + "'"
-					+ " , @reportType = '" + reportType + "'  ";
+			String callProcedureUpdate = "EXEC [dbo].[sp_load_data] @data = '" + peticion + "'" + " , @reportType = '"
+					+ reportType + "'  ";
 
 			Query queryDataUpdate = entityManager.createNativeQuery(callProcedureUpdate);
 			NativeQueryImpl nativeQueryUpdate = (NativeQueryImpl) queryDataUpdate;
