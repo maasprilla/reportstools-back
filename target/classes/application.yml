@@ -12,7 +12,7 @@ spring:
     hibernate:
       ddl-auto: none
       dialect: org.hibernate.dialect.SQLServerDialect
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.SQLServerDialect

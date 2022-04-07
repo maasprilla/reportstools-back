@@ -11,9 +11,6 @@ import org.hibernate.query.internal.NativeQueryImpl;
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import co.com.reportstools.models.User;
 
 @Repository
 public class AuditRepository {

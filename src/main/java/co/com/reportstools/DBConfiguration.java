@@ -32,7 +32,7 @@ public class DBConfiguration {
 		sessionFactory.setPackagesToScan("co");
 		Properties hibernateProperties = new Properties();
 		hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
-		hibernateProperties.put("hibernate.show_sql", true);
+		hibernateProperties.put("hibernate.show_sql", false);
 		hibernateProperties.put("hibernate.hbm2ddl.auto", "none");
 		sessionFactory.setHibernateProperties(hibernateProperties);
 
