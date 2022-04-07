@@ -337,7 +337,7 @@ public class LegalizacionRepository {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "      ([UNI_ID],[Frpl],[QuienFirmaEsfp],[EstadoEsfpFrpl],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],[ObservacionAnalista],[EstadoAbogado],\n"
 							+ "        [ObservacionAbogado],[CualFueElCambio],[NoPredialNacional],[NumeroId],[IdMunicipio],[RadicaciónOrdenPagoPySPredial],[FechaEstimadaDePyS],\n"
-							+ "        [TipoPyS],[MunicipioPyS],[EstadoPyS],[EstadoOrdenes] ) \n" + "        VALUES (''"
+							+ "        [TipoPyS],[MunicipioPyS],[EstadoPyS],[EstadoOrdenes],[TipoProyectoM],[ValorFacturaPazySalvoPredial],[ValorEstampilla],[ValorEstampillaDepartamental],[PresentoCambio] ) \n" + "        VALUES (''"
 							+ map.get("UNI_ID") + "'',\n" + "        ''" + map.get("Frpl") + "'',\n" + "        ''"
 							+ map.get("QuienFirmaEsfp") + "'',\n" + "        ''" + map.get("EstadoEsfpFrpl") + "'',\n"
 							+ "        ''" + map.get("EstadoCoordinador") + "'',\n" + "        ''"
@@ -350,7 +350,11 @@ public class LegalizacionRepository {
 							+ map.get("RadicaciónOrdenPagoPySPredial") + "'',\n" + "        ''"
 							+ map.get("FechaEstimadaDePyS") + "'',\n" + "        ''" + map.get("TipoPyS") + "'',\n"
 							+ "        ''" + map.get("MunicipioPyS") + "'',\n" + "        ''" + map.get("EstadoPyS")
-							+ "'',\n" + "        ''" + map.get("EstadoOrdenes") + "'')";
+							+ "'',\n" + "        ''" + map.get("EstadoOrdenes") + "'',\n" + "        ''"
+							+ map.get("TipoProyectoM") + "'',\n" + "        ''" + map.get("ValorFacturaPazySalvoPredial")
+							+ "'',\n" + "        ''" + map.get("ValorEstampilla") 
+							+ "'',\n" + "        ''" + map.get("ValorEstampillaDepartamental") 
+							+ "'',\n" + "        ''" + map.get("PresentoCambio") + "'')";
 					audit.setHerramienta("Ordenes");
 				} else if (reportType == this.RENOVACION) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
@@ -528,10 +532,7 @@ public class LegalizacionRepository {
 
 				for (String entry : element.keySet()) {
 //					System.out.println(entry);
-					map.put(entry, element.get(entry) == null ? "IGNORE"
-							: (element.get(entry).toString().equals("vacio")
-									|| element.get(entry).toString().equals("Vacio")
-									|| element.get(entry).toString().equals("VACIO")) ? null : element.get(entry));
+					map.put(entry, element.get(entry));
 				}
 				String id = element.getString("UNI_ID");
 				// System.out.println(id);
@@ -543,117 +544,150 @@ public class LegalizacionRepository {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "    ([UNI_ID],[FechaSeguimientoCoordinador],[EstadoCoordinador],[ObservacionCoordinador],[FechaSeguimientoAnalista],[EstadoAnalista],\n"
 							+ "      [ObservacionAnalista],[FechaAsignacion],[AsignacionAnalista],[AnalistaVarado],[FechaAsignacionVarado],[FechaDesvarado] ) \n"
-							+ "      VALUES (''" + map.get("UNI_ID") + "'',\n" + "      ''"
-							+ map.get("FechaSeguimientoCoordinador") + "'',\n" + "      ''"
-							+ map.get("EstadoCoordinador") + "'',\n" + "      ''" + map.get("ObservacionCoordinador")
-							+ "'',\n" + "      ''" + map.get("FechaSeguimientoAnalista") + "'',\n" + "      ''"
-							+ map.get("EstadoAnalista") + "'',\n" + "      ''" + map.get("ObservacionAnalista")
-							+ "'',\n" + "      ''" + map.get("FechaAsignacion") + "'',\n" + "      ''"
-							+ map.get("AsignacionAnalista") + "'',\n" + "      ''" + map.get("AnalistaVarado") + "'',\n"
-							+ "      ''" + map.get("FechaAsignacionVarado") + "'',\n" + "      ''"
-							+ map.get("FechaDesvarado") + "'')";
+							+ "      VALUES (''" + this.standardizeMapValue("UNI_ID", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("FechaSeguimientoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("FechaSeguimientoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("FechaAsignacion", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("AsignacionAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("AnalistaVarado", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("FechaAsignacionVarado", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("FechaDesvarado", map) + "'')";
 				} else if (reportType == this.PROMESA) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
-							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''" + map.get("UNI_ID") + "'',\n"
-							+ "      ''" + map.get("EstadoCoordinador") + "'',\n" + "      ''"
-							+ map.get("ObservacionCoordinador") + "'',\n" + "      ''" + map.get("EstadoAnalista")
-							+ "'',\n" + "      ''" + map.get("ObservacionAnalista") + "'')";
+							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''"
+							+ this.standardizeMapValue("UNI_ID", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'')";
 				} else if (reportType == this.SEGUIMIENTO_SUBSIDIO) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
-							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''" + map.get("UNI_ID") + "'',\n"
-							+ "      ''" + map.get("EstadoCoordinador") + "'',\n" + "      ''"
-							+ map.get("ObservacionCoordinador") + "'',\n" + "      ''" + map.get("EstadoAnalista")
-							+ "'',\n" + "      ''" + map.get("ObservacionAnalista") + "'')";
+							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''"
+							+ this.standardizeMapValue("UNI_ID", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'')";
 				} else if (reportType == this.ENTREGA) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "    ([UNI_ID],[FechadeEntrega],[HoradeEntrega],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
 							+ "      [ObservacionAnalista], [Arquitecta],[CreacionCaso],[Apoderado]) \n"
-							+ "      VALUES (''" + map.get("UNI_ID") + "'',\n" + "      ''" + map.get("FechadeEntrega")
-							+ "'',\n" + "      ''" + map.get("HoradeEntrega") + "'',\n" + "      ''"
-							+ map.get("EstadoCoordinador") + "'',\n" + "      ''" + map.get("ObservacionCoordinador")
-							+ "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n" + "      ''"
-							+ map.get("ObservacionAnalista") + "'', " + "      ''" + map.get("Arquitecta") + "'', "
-							+ "      ''" + map.get("CreacionCaso") + "'', " + "      ''" + map.get("Apoderado")
-							+ "'' )";
+							+ "      VALUES (''" + this.standardizeMapValue("UNI_ID", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("FechadeEntrega", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("HoradeEntrega", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'', " + "      ''"
+							+ this.standardizeMapValue("Arquitecta", map) + "'', " + "      ''"
+							+ this.standardizeMapValue("CreacionCaso", map) + "'', " + "      ''"
+							+ this.standardizeMapValue("Apoderado", map) + "'' )";
 
 				} else if (reportType == this.DESEMBOLSO) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[Comentarios],[EstadoAnalista],\n"
-							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''" + map.get("UNI_ID") + "'',\n"
-							+ "      ''" + map.get("EstadoCoordinador") + "'',\n" + "      ''"
-							+ map.get("ObservacionCoordinador") + "'',\n" + "      ''" + map.get("Comentarios")
-							+ "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n" + "      ''"
-							+ map.get("ObservacionAnalista") + "'')";
+							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''"
+							+ this.standardizeMapValue("UNI_ID", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("Comentarios", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'')";
 				} else if (reportType == this.TRAZABILIDAD) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
 							+ "      [ObservacionAnalista],[TipificacionCorreccionesCtl],[NBR],[AnalistaTrazabilidad],[DetalleObservacion] ) \n"
-							+ "      VALUES (''" + map.get("UNI_ID") + "'',\n" + "      ''"
-							+ map.get("EstadoCoordinador") + "'',\n" + "      ''" + map.get("ObservacionCoordinador")
-							+ "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n" + "      ''"
-							+ map.get("ObservacionAnalista") + "'',\n" + "      ''"
-							+ map.get("TipificacionCorreccionesCtl") + "'',\n" + "      ''" + map.get("NBR") + "'',\n"
-							+ "      ''" + map.get("AnalistaTrazabilidad") + "'',\n" + "      ''"
-							+ map.get("DetalleObservacion") + "'')";
+							+ "      VALUES (''" + this.standardizeMapValue("UNI_ID", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("TipificacionCorreccionesCtl", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("NBR", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("AnalistaTrazabilidad", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("DetalleObservacion", map) + "'')";
 				} else if (reportType == this.SUBSIDIO) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[Comentarios],[EstadoAnalista],\n"
-							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''" + map.get("UNI_ID") + "'',\n"
-							+ "      ''" + map.get("EstadoCoordinador") + "'',\n" + "      ''"
-							+ map.get("ObservacionCoordinador") + "'',\n" + "      ''" + map.get("Comentarios")
-							+ "'',\n" + "      ''" + map.get("EstadoAnalista") + "'',\n" + "      ''"
-							+ map.get("ObservacionAnalista") + "'')";
+							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''"
+							+ this.standardizeMapValue("UNI_ID", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("Comentarios", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'')";
 				} else if (reportType == this.ORDENES) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "      ([UNI_ID],[Frpl],[QuienFirmaEsfp],[EstadoEsfpFrpl],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],[ObservacionAnalista],[EstadoAbogado],\n"
 							+ "        [ObservacionAbogado],[CualFueElCambio],[NoPredialNacional],[NumeroId],[IdMunicipio],[RadicaciónOrdenPagoPySPredial],[FechaEstimadaDePyS],\n"
 							+ "        [TipoPyS],[MunicipioPyS],[EstadoPyS],[EstadoOrdenes] ) \n" + "        VALUES (''"
-							+ map.get("UNI_ID") + "'',\n" + "        ''" + map.get("Frpl") + "'',\n" + "        ''"
-							+ map.get("QuienFirmaEsfp") + "'',\n" + "        ''" + map.get("EstadoEsfpFrpl") + "'',\n"
-							+ "        ''" + map.get("EstadoCoordinador") + "'',\n" + "        ''"
-							+ map.get("ObservacionCoordinador") + "'',\n" + "        ''" + map.get("EstadoAnalista")
-							+ "'',\n" + "        ''" + map.get("ObservacionAnalista") + "'',\n" + "        ''"
-							+ map.get("EstadoAbogado") + "'',\n" + "        ''" + map.get("ObservacionAbogado")
-							+ "'',\n" + "        ''" + map.get("CualFueElCambio") + "'',\n" + "        ''"
-							+ map.get("NoPredialNacional") + "'',\n" + "        ''" + map.get("NumeroId") + "'',\n"
-							+ "        ''" + map.get("IdMunicipio") + "'',\n" + "        ''"
-							+ map.get("RadicaciónOrdenPagoPySPredial") + "'',\n" + "        ''"
-							+ map.get("FechaEstimadaDePyS") + "'',\n" + "        ''" + map.get("TipoPyS") + "'',\n"
-							+ "        ''" + map.get("MunicipioPyS") + "'',\n" + "        ''" + map.get("EstadoPyS")
-							+ "'',\n" + "        ''" + map.get("EstadoOrdenes") + "'')";
+							+ this.standardizeMapValue("UNI_ID", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("Frpl", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("QuienFirmaEsfp", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoEsfpFrpl", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoAbogado", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ObservacionAbogado", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("CualFueElCambio", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("NoPredialNacional", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("NumeroId", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("IdMunicipio", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("RadicaciónOrdenPagoPySPredial", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("FechaEstimadaDePyS", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("TipoPyS", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("MunicipioPyS", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoPyS", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoOrdenes", map) + "'')";
 				} else if (reportType == this.RENOVACION) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "      ([UNI_ID],[FechaSeguimientoCoordinador],[EstadoCoordinador],[ObservacionCoordinador],[CampanasEspeciales],[CausalRenovacion],[FechaSeguimientoAnalista],[EstadoAnalista],[ObservacionAnalista],[EstadoPoderAnalista],[Asignacion],[Broker],[FechaAsignacion] ) \n"
-							+ "        VALUES (''" + map.get("UNI_ID") + "'',\n" + "        ''"
-							+ map.get("FechaSeguimientoCoordinador") + "'',\n" + "        ''"
-							+ map.get("EstadoCoordinador") + "'',\n" + "        ''" + map.get("ObservacionCoordinador")
-							+ "'',\n" + "        ''" + map.get("CampanasEspeciales") + "'',\n" + "        ''"
-							+ map.get("CausalRenovacion") + "'',\n" + "        ''" + map.get("FechaSeguimientoAnalista")
-							+ "'',\n" + "        ''" + map.get("EstadoAnalista") + "'',\n" + "        ''"
-							+ map.get("ObservacionAnalista") + "'',\n" + "        ''" + map.get("EstadoPoderAnalista")
-							+ "'',\n" + "        ''" + map.get("Asignacion") + "'',\n" + "        ''"
-							+ map.get("Broker") + "'',\n" + "        ''" + map.get("FechaAsignacion") + "'')";
+							+ "        VALUES (''" + this.standardizeMapValue("UNI_ID", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("FechaSeguimientoCoordinador", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("CampanasEspeciales", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("CausalRenovacion", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("FechaSeguimientoAnalista", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoPoderAnalista", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("Asignacion", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("Broker", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("FechaAsignacion", map) + "'')";
 				} else if (reportType == this.ESCRITURACION) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "    ([UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],\n"
-							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''" + map.get("UNI_ID") + "'',\n"
-							+ "      ''" + map.get("EstadoCoordinador") + "'',\n" + "      ''"
-							+ map.get("ObservacionCoordinador") + "'',\n" + "      ''" + map.get("EstadoAnalista")
-							+ "'',\n" + "      ''" + map.get("ObservacionAnalista") + "'')";
+							+ "      [ObservacionAnalista] ) \n" + "      VALUES (''"
+							+ this.standardizeMapValue("UNI_ID", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "      ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'')";
 				} else if (reportType == this.RECAUDO) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "      ( [UNI_ID],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],[ObservacionAnalista],[FechaAcuerdoProximoPago],[MontoPactado],[LlamadaNo1],[LlamadaNo2],[LlamadaNo3],[LlamadaNo4],[LlamadaNo5],[EstadoEscriturado] ) \n"
-							+ "        VALUES (''" + map.get("UNI_ID") + "'',\n" + "        ''"
-							+ map.get("EstadoCoordinador") + "'',\n" + "        ''" + map.get("ObservacionCoordinador")
-							+ "'',\n" + "        ''" + map.get("EstadoAnalista") + "'',\n" + "        ''"
-							+ map.get("ObservacionAnalista") + "'',\n" + "        ''"
-							+ map.get("FechaAcuerdoProximoPago") + "'',\n" + "        ''" + map.get("MontoPactado")
-							+ "'',\n" + "        ''" + map.get("LlamadaNo1") + "'',\n" + "        ''"
-							+ map.get("LlamadaNo2") + "'',\n" + "        ''" + map.get("LlamadaNo3") + "'',\n"
-							+ "        ''" + map.get("LlamadaNo4") + "'',\n" + "        ''" + map.get("LlamadaNo5")
-							+ "'',\n" + "        ''" + map.get("EstadoEscriturado") + "'')";
+							+ "        VALUES (''" + this.standardizeMapValue("UNI_ID", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoCoordinador", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ObservacionCoordinador", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoAnalista", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ObservacionAnalista", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("FechaAcuerdoProximoPago", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("MontoPactado", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("LlamadaNo1", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("LlamadaNo2", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("LlamadaNo3", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("LlamadaNo4", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("LlamadaNo5", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("EstadoEscriturado", map) + "'')";
 				}
 
 				entryInsert = entryInsert.replace("Invalid Date", "null");
@@ -719,5 +753,18 @@ public class LegalizacionRepository {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	private String standardizeMapValue(String key, Map map) {
+		if (map.get(key) == null) {
+			return "IGNORE";
+		} else if (map.get(key).toString().equals("Vacio") || map.get(key).toString().equals("vacio")
+				|| map.get(key).toString().equals("VACIO")) {
+			return null;
+		} else if (map.get(key).toString().equals("Null") || map.get(key).toString().equals("null")
+				|| map.get(key).toString().equals("NULL")) {
+			return null;
+		}
+		return map.get(key).toString();
 	}
 }
