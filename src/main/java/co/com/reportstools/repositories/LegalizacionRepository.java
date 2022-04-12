@@ -38,6 +38,8 @@ public class LegalizacionRepository {
 	final int ORDENES = 9;
 	final int RENOVACION = 10;
 	final int ESCRITURACION = 11;
+	final int JUNTAS = 101;
+	final int VIGENCIAS = 102;
 
 	final String STORE_PROCEDURE_LEGALIZACION = "sp_legalizacion";
 	final String STORE_PROCEDURE_PROMESA = "sp_promesas";
@@ -336,24 +338,25 @@ public class LegalizacionRepository {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
 							+ "      ([UNI_ID],[Frpl],[QuienFirmaEsfp],[EstadoEsfpFrpl],[EstadoCoordinador],[ObservacionCoordinador],[EstadoAnalista],[ObservacionAnalista],[EstadoAbogado],\n"
 							+ "        [ObservacionAbogado],[CualFueElCambio],[NoPredialNacional],[NumeroId],[IdMunicipio],[RadicaciónOrdenPagoPySPredial],[FechaEstimadaDePyS],\n"
-							+ "        [TipoPyS],[MunicipioPyS],[EstadoPyS],[EstadoOrdenes],[TipoProyectoM],[ValorFacturaPazySalvoPredial],[ValorEstampilla],[ValorEstampillaDepartamental],[PresentoCambio] ) \n" + "        VALUES (''"
-							+ map.get("UNI_ID") + "'',\n" + "        ''" + map.get("Frpl") + "'',\n" + "        ''"
-							+ map.get("QuienFirmaEsfp") + "'',\n" + "        ''" + map.get("EstadoEsfpFrpl") + "'',\n"
-							+ "        ''" + map.get("EstadoCoordinador") + "'',\n" + "        ''"
-							+ map.get("ObservacionCoordinador") + "'',\n" + "        ''" + map.get("EstadoAnalista")
-							+ "'',\n" + "        ''" + map.get("ObservacionAnalista") + "'',\n" + "        ''"
-							+ map.get("EstadoAbogado") + "'',\n" + "        ''" + map.get("ObservacionAbogado")
-							+ "'',\n" + "        ''" + map.get("CualFueElCambio") + "'',\n" + "        ''"
-							+ map.get("NoPredialNacional") + "'',\n" + "        ''" + map.get("NumeroId") + "'',\n"
-							+ "        ''" + map.get("IdMunicipio") + "'',\n" + "        ''"
-							+ map.get("RadicaciónOrdenPagoPySPredial") + "'',\n" + "        ''"
+							+ "        [TipoPyS],[MunicipioPyS],[EstadoPyS],[EstadoOrdenes],[TipoProyectoM],[ValorFacturaPazySalvoPredial],[ValorEstampilla],[ValorEstampillaDepartamental],[PresentoCambio] ) \n"
+							+ "        VALUES (''" + map.get("UNI_ID") + "'',\n" + "        ''" + map.get("Frpl")
+							+ "'',\n" + "        ''" + map.get("QuienFirmaEsfp") + "'',\n" + "        ''"
+							+ map.get("EstadoEsfpFrpl") + "'',\n" + "        ''" + map.get("EstadoCoordinador")
+							+ "'',\n" + "        ''" + map.get("ObservacionCoordinador") + "'',\n" + "        ''"
+							+ map.get("EstadoAnalista") + "'',\n" + "        ''" + map.get("ObservacionAnalista")
+							+ "'',\n" + "        ''" + map.get("EstadoAbogado") + "'',\n" + "        ''"
+							+ map.get("ObservacionAbogado") + "'',\n" + "        ''" + map.get("CualFueElCambio")
+							+ "'',\n" + "        ''" + map.get("NoPredialNacional") + "'',\n" + "        ''"
+							+ map.get("NumeroId") + "'',\n" + "        ''" + map.get("IdMunicipio") + "'',\n"
+							+ "        ''" + map.get("RadicaciónOrdenPagoPySPredial") + "'',\n" + "        ''"
 							+ map.get("FechaEstimadaDePyS") + "'',\n" + "        ''" + map.get("TipoPyS") + "'',\n"
 							+ "        ''" + map.get("MunicipioPyS") + "'',\n" + "        ''" + map.get("EstadoPyS")
 							+ "'',\n" + "        ''" + map.get("EstadoOrdenes") + "'',\n" + "        ''"
-							+ map.get("TipoProyectoM") + "'',\n" + "        ''" + map.get("ValorFacturaPazySalvoPredial")
-							+ "'',\n" + "        ''" + map.get("ValorEstampilla") 
-							+ "'',\n" + "        ''" + map.get("ValorEstampillaDepartamental") 
-							+ "'',\n" + "        ''" + map.get("PresentoCambio") + "'')";
+							+ map.get("TipoProyectoM") + "'',\n" + "        ''"
+							+ map.get("ValorFacturaPazySalvoPredial") + "'',\n" + "        ''"
+							+ map.get("ValorEstampilla") + "'',\n" + "        ''"
+							+ map.get("ValorEstampillaDepartamental") + "'',\n" + "        ''"
+							+ map.get("PresentoCambio") + "'')";
 					audit.setHerramienta("Ordenes");
 				} else if (reportType == this.RENOVACION) {
 					entryInsert = "INSERT INTO #tblTEMP  \n"
@@ -498,16 +501,44 @@ public class LegalizacionRepository {
 		String[] div = headers.split("\n");
 		String newHeader = "";
 		for (int i = 0; i < div.length; i++) {
+			if (i == 33) {
+				System.out.println(i);
+			}
 			div[i] = div[i].replaceAll("\r", "").replaceAll("\n", "").replaceAll("\t", "");
 			if (div[i].contains("=")) {
 				String[] temp = div[i].split("=");
 				if (temp.length > 1) {
-					temp[1] = temp[1].replaceAll(",", ";");
-					temp[1] = temp[1].trim();
-					if (temp[1].charAt(temp[1].length() - 1) == ';') {
-						temp[1] = temp[1].substring(0, temp[1].length() - 1);
+
+					String tempText = "";
+					for (int index = 1; index <= (temp.length - 1); index++) {
+						if (index >= (temp.length - 1)) {
+							tempText = tempText + temp[index].trim() + " ";
+						} else {
+							tempText = tempText + temp[index].trim() + " = ";
+						}
+
+//						temp[index] = temp[index].replaceAll(",", ";");
+//						temp[index] = temp[index].trim();
+//						if (temp[index].charAt(temp[index].length() - 1) == ';') {
+//							temp[index] = temp[index].substring(0, temp[index].length() - 1);
+//						}
 					}
-					div[i] = temp[0] + " = " + temp[1] + ",";
+
+					tempText = tempText.replaceAll(",", ";");
+
+					tempText = tempText.trim();
+					if (tempText.charAt(tempText.length() - 1) == ';') {
+						tempText = tempText.substring(0, tempText.length() - 1) + ",";
+					}
+
+					div[i] = tempText;
+
+//					temp[1] = temp[1].replaceAll(",", ";");
+//					temp[1] = temp[1].trim();
+//					if (temp[1].charAt(temp[1].length() - 1) == ';') {
+//						temp[1] = temp[1].substring(0, temp[1].length() - 1);
+//					}
+//					div[i] = temp[0] + " = " + temp[1] + ",";
 				}
 			}
 			newHeader += div[i];
@@ -533,10 +564,10 @@ public class LegalizacionRepository {
 //					System.out.println(entry);
 					map.put(entry, element.get(entry));
 				}
-				String id = element.getString("UNI_ID");
+//				String id = element.isNull("UNI_ID") ? element.getString("UNI_ID") : "";
 				// System.out.println(id);
 
-				String storeProcedureName = this.getStoreProcedureName(reportType);
+//				String storeProcedureName = this.getStoreProcedureName(reportType);
 
 				String entryInsert = "";
 				if (reportType == this.LEGALIZACION) {
@@ -687,6 +718,20 @@ public class LegalizacionRepository {
 							+ this.standardizeMapValue("LlamadaNo4", map) + "'',\n" + "        ''"
 							+ this.standardizeMapValue("LlamadaNo5", map) + "'',\n" + "        ''"
 							+ this.standardizeMapValue("EstadoEscriturado", map) + "'')";
+				} else if (reportType == this.JUNTAS) {
+					entryInsert = "INSERT INTO #tblTEMP  \n"
+							+ "      ( [UNI_ID],[ProyEntrega],[ProyEscritura],[TorreManzana],[Unidad] ) \n"
+							+ "        VALUES (''" + this.standardizeMapValue("UNI_ID", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ProyEntrega", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("ProyEscritura", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("TorreManzana", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("Unidad", map) + "'')";
+				} else if (reportType == this.VIGENCIAS) {
+					entryInsert = "INSERT INTO #tblTEMP  \n"
+							+ "      ( [EntidadCredito],[DiasRatificado],[DiasAprobado] ) \n" + "        VALUES (''"
+							+ this.standardizeMapValue("EntidadCredito", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("DiasRatificado", map) + "'',\n" + "        ''"
+							+ this.standardizeMapValue("DiasAprobado", map) + "'')";
 				}
 
 				entryInsert = entryInsert.replace("Invalid Date", "null");
